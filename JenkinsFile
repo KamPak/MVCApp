@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    environment { 
+        GIT_REPO = 'https://github.com/KamPak/MVCApp.git'
+        GIT_CREDENTIALS = 'd1d83257-b0c2-4e5c-b292-d2ed19524a28'
+        DOCKER_IMAGE = 'mvcapp-image'
+        DOCKER_CONTAINER = 'mvcapp-container'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: "${GIT_REPO}", credentialsId: "${GIT_CREDENTIALS}"
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'dotnet restore'
+                sh 'dotnet build --configuration Release'
+            }
+        }
+        
+        stage('Publish') {
+            steps {
+               sh 'dotnet publish -c Release -o out'
+            }
+        }
+        
+    }
+}
